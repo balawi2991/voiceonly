@@ -54,7 +54,7 @@ export async function GET(
     // إضافة headers للـ CORS وترميز UTF-8
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma, Expires');
     response.headers.set('Content-Type', 'application/json; charset=utf-8');
     // إضافة headers لمنع التخزين المؤقت
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -73,7 +73,7 @@ export async function GET(
     // إضافة headers للـ CORS وترميز UTF-8
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma, Expires');
     response.headers.set('Content-Type', 'application/json; charset=utf-8');
     // إضافة headers لمنع التخزين المؤقت
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -137,7 +137,7 @@ export async function PUT(
     // إضافة headers للـ CORS وترميز UTF-8
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma, Expires');
     response.headers.set('Content-Type', 'application/json; charset=utf-8');
     
     return response;
@@ -158,7 +158,7 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cache-Control, Pragma, Expires',
     },
   });
 }

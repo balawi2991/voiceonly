@@ -246,10 +246,15 @@
     }
 
     startConfigUpdates() {
-      // تحديث التخصيص كل 10 ثوان (أسرع للاختبار)
+      console.log('🔄 بدء مراقبة تحديثات التكوين');
+      
+      // تحديث فوري
+      this.updateBotConfig();
+      
+      // تحديث دوري كل 30 ثانية (أقل تكراراً)
       this.configUpdateInterval = setInterval(async () => {
-        await this.updateBotConfig();
-      }, 10000);
+        await this.updateBotConfig(true); // silent mode
+      }, 30000);
 
       // محاولة إعداد تحديث فوري عبر localStorage
       this.setupInstantUpdates();
@@ -288,12 +293,28 @@
       });
     }
 
-    async updateBotConfig() {
+    async updateBotConfig(silent = false) {
       try {
+        if (!silent) {
+          console.log('🔄 بدء تحديث التكوين...');
+          console.log('📊 التكوين الحالي:', this.botConfig);
+        }
+        
         // إضافة cache busting للتأكد من الحصول على أحدث البيانات
         const timestamp = Date.now();
-        const response = await fetch(`${this.config.baseUrl}/api/bot/config/${this.agentId}?_t=${timestamp}`);
+        const response = await fetch(`${this.config.baseUrl}/api/bot/config/${this.agentId}?_t=${timestamp}&_force=${Math.random()}`, {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+        
         const result = await response.json();
+        if (!silent) {
+          console.log('📡 حالة الاستجابة:', response.status);
+          console.log('📡 نتيجة API:', result);
+        }
 
         if (result.success && result.data) {
           const newConfig = {
@@ -307,15 +328,67 @@
           const hasChanges = JSON.stringify(this.botConfig) !== JSON.stringify(newConfig);
 
           if (hasChanges) {
-            console.log('🔄 Bot config updated:', newConfig);
+            if (!silent) {
+              console.log('🔄 Bot config updated:', newConfig);
+            }
             
             // التحقق من تغيير رسالة الترحيب تحديداً
-            const welcomeMessageChanged = this.botConfig?.welcomeMessage !== newConfig.welcomeMessage;
+            const oldWelcomeMessage = this.botConfig?.welcomeMessage;
+            const newWelcomeMessage = newConfig.welcomeMessage;
+            
+            if (!silent) {
+              console.log('📊 التكوين الجديد:', newConfig);
+              console.log('🔍 مقارنة رسائل الترحيب:');
+              console.log('📝 القديمة:', oldWelcomeMessage);
+              console.log('📝 الجديدة:', newWelcomeMessage);
+            }
+            
+            const welcomeMessageChanged = oldWelcomeMessage !== newWelcomeMessage;
             if (welcomeMessageChanged) {
-              console.log('📢 Welcome message updated:', {
-                old: this.botConfig?.welcomeMessage,
-                new: newConfig.welcomeMessage
-              });
+              console.log('📢 رسالة الترحيب تم تحديثها:', newWelcomeMessage);
+              
+              // إشعار المستخدم بالتحديث
+              if (this.widget) {
+                const updateNotice = document.createElement('div');
+                updateNotice.style.cssText = `
+                  position: fixed;
+                  top: 20px;
+                  right: 20px;
+                  background: linear-gradient(135deg, #4ade80, #22c55e);
+                  color: white;
+                  padding: 12px 16px;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 500;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                  z-index: 10001;
+                  animation: slideIn 0.3s ease-out;
+                `;
+                updateNotice.textContent = '✅ تم تحديث رسالة الترحيب';
+                
+                // إضافة الأنيميشن
+                const style = document.createElement('style');
+                style.textContent = `
+                  @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                  }
+                `;
+                document.head.appendChild(style);
+                document.body.appendChild(updateNotice);
+                
+                // إزالة الإشعار بعد 3 ثوان
+                setTimeout(() => {
+                  if (updateNotice.parentNode) {
+                    updateNotice.remove();
+                  }
+                  if (style.parentNode) {
+                    style.remove();
+                  }
+                }, 3000);
+              }
+            } else if (!silent) {
+              console.log('ℹ️ لم تتغير رسالة الترحيب');
             }
             
             this.botConfig = newConfig;
@@ -640,14 +713,40 @@
 
     async playWelcomeMessage() {
       try {
+        // تحديث التكوين أولاً للحصول على أحدث رسالة ترحيب
+        console.log('🔄 تحديث التكوين قبل تشغيل رسالة الترحيب...');
+        
+        // إجبار تحديث التكوين مع cache busting قوي
+        const timestamp = Date.now();
+        const response = await fetch(`${this.config.baseUrl}/api/bot/config/${this.agentId}?_t=${timestamp}&_force=${Math.random()}`, {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          const newConfig = {
+            name: result.data.name || 'مساعد ذكي',
+            avatarEmoji: result.data.avatar_emoji || '🤖',
+            voiceId: result.data.voice_id || 'ar-male-1',
+            welcomeMessage: result.data.welcome_message || ''
+          };
+          
+          this.botConfig = newConfig;
+        }
+        
         // التحقق من وجود رسالة ترحيب
         const welcomeText = this.botConfig?.welcomeMessage;
         if (!welcomeText || !welcomeText.trim()) {
-          console.log('No welcome message configured');
+          console.log('❌ لا توجد رسالة ترحيب مكونة');
           return;
         }
 
-        console.log('🎬 بدء تشغيل رسالة الترحيب:', welcomeText.substring(0, 50) + '...');
+        console.log('🎬 تشغيل رسالة الترحيب:', welcomeText.substring(0, 50) + '...');
 
         // توليد الصوت مباشرة باستخدام Speechify Streaming TTS
         try {
