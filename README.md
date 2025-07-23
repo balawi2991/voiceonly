@@ -1,36 +1,146 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 سند بوت - مساعدك الذكي الصوتي
 
-## Getting Started
+مساعد ذكي صوتي متقدم يتكامل مع موقعك بسهولة، مبني بتقنيات حديثة ومصمم خصيصاً للمحتوى العربي.
 
-First, run the development server:
+## 🎵 **آخر التحديثات**
+- ✅ **تم دمج Speechify TTS** - خدمة TTS متقدمة مع جودة عالية
+- ✅ **نظام TTS مرن** - إمكانية التبديل بين OpenAI و Speechify
+- ✅ **إيقاف OpenAI مؤقتاً** - تجنب مشاكل الحصة اليومية
+- ✅ **تحديث فوري للتخصيصات** - التغييرات تنعكس خلال ثوان
+- ✅ **نظام إصدارات متقدم** - تحديثات تلقائية للبوت المضمن
 
+## ✨ المميزات
+
+### 🎤 تفاعل صوتي كامل
+- **محادثة طبيعية**: تحدث مع البوت بصوتك الطبيعي
+- **ردود صوتية**: يرد عليك بصوت واضح ومفهوم
+- **أصوات متعددة**: اختر من مجموعة أصوات عربية متنوعة
+
+### 🎨 تخصيص كامل
+- **ألوان مخصصة**: اختر اللون المناسب لعلامتك التجارية
+- **أصوات متنوعة**: أصوات ذكورية وأنثوية عربية
+- **رسائل ترحيب**: خصص رسالة الترحيب الخاصة بك
+- **صورة رمزية**: ارفع صورة مخصصة للمساعد
+
+### 🧠 ذكاء متقدم
+- **معالجة طبيعية**: يفهم اللغة العربية بطلاقة
+- **قاعدة معرفة**: ارفع ملفاتك ليتعلم منها
+- **أسئلة شائعة**: إجابات سريعة للأسئلة المتكررة
+- **تعلم مستمر**: يتحسن مع كل محادثة
+
+### 📊 تحليلات شاملة
+- **إحصائيات المحادثات**: تتبع عدد وجودة المحادثات
+- **تقارير مفصلة**: فهم سلوك المستخدمين
+- **معدلات الرضا**: قياس فعالية المساعد
+
+## 🛠️ التقنيات المستخدمة
+
+### Frontend
+- **Next.js 14** - إطار عمل React متقدم
+- **TypeScript** - لكود آمن ومنظم
+- **Tailwind CSS** - تصميم سريع ومرن
+- **Framer Motion** - حركات وانتقالات سلسة
+- **ShadCN UI** - مكونات UI جاهزة وأنيقة
+
+### Backend & Database
+- **Supabase** - قاعدة بيانات PostgreSQL مع مصادقة
+- **Next.js API Routes** - APIs سريعة ومدمجة
+
+### AI & Voice Processing
+- **Gladia API** - تحويل الصوت إلى نص
+- **Google Gemini LLM** - معالجة اللغة الطبيعية والذكاء الاصطناعي
+- **Speechify TTS** - تحويل النص إلى صوت بجودة عالية (نشط حالياً)
+- **OpenAI TTS (tts-1-hd)** - تحويل النص إلى صوت فائق الجودة (معطل مؤقتاً)
+
+## 🚀 التثبيت والإعداد
+
+### 1. استنساخ المشروع
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/sanad-bot.git
+cd sanad-bot
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. تثبيت المتطلبات
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. إعداد متغيرات البيئة
+```bash
+cp .env.local.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+املأ المتغيرات التالية في `.env.local`:
 
-## Learn More
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-To learn more about Next.js, take a look at the following resources:
+# Voice APIs
+GLADIA_API_KEY=your_gladia_key
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# AI & TTS
+# OpenAI TTS (currently disabled - can be enabled later)
+OPENAI_API_KEY=your_openai_key
+# Speechify TTS (currently active)
+SPEECHIFY_API_KEY=your_speechify_api_key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. تشغيل المشروع
+```bash
+npm run dev
+```
 
-## Deploy on Vercel
+المشروع سيعمل على `http://localhost:3000`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📖 كيفية الاستخدام
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 1. إنشاء حساب
+- اذهب إلى `/signup`
+- أدخل بياناتك وأنشئ حساب جديد
+
+### 2. تخصيص المساعد
+- اذهب إلى `/dashboard/appearance`
+- اختر اللون والصوت والاسم
+- ارفع صورة رمزية (اختياري)
+
+### 3. إضافة المعرفة
+- اذهب إلى `/dashboard/knowledge`
+- ارفع ملفات PDF أو TXT أو MD
+- أو أضف محتوى نصي مباشرة
+
+### 4. إعداد الأسئلة الشائعة
+- اذهب إلى `/dashboard/faq`
+- أضف أسئلة وأجوبة سريعة
+
+### 5. تضمين البوت في موقعك
+انسخ الكود التالي وضعه في موقعك:
+
+```html
+<script
+  src="https://your-domain.com/embed.js"
+  data-agent-id="your-agent-id">
+</script>
+```
+
+## 🎯 الصفحات المتاحة
+
+### صفحات عامة
+- `/` - الصفحة الرئيسية
+- `/login` - تسجيل الدخول
+- `/signup` - إنشاء حساب
+
+### لوحة التحكم
+- `/dashboard` - نظرة عامة
+- `/dashboard/appearance` - تخصيص المظهر
+- `/dashboard/knowledge` - إدارة المعرفة
+- `/dashboard/faq` - الأسئلة الشائعة
+- `/dashboard/conversations` - المحادثات
+
+### التضمين
+- `/embed/[agentId]` - صفحة التضمين
+
+---
+
+صُنع بـ ❤️ للمجتمع العربي
