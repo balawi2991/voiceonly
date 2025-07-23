@@ -133,14 +133,23 @@
 
     async fetchBotConfig() {
       try {
-        const configUrl = `${this.config.baseUrl}/api/bot/config/${this.agentId}`;
-        console.log('Fetching bot config from:', configUrl);
+        // إضافة cache busting للتأكد من الحصول على أحدث البيانات
+        const timestamp = Date.now();
+        const configUrl = `${this.config.baseUrl}/api/bot/config/${this.agentId}?_t=${timestamp}`;
+        console.log('🔄 Fetching bot config from:', configUrl);
 
-        const response = await fetch(configUrl);
-        console.log('Config response status:', response.status);
+        const response = await fetch(configUrl, {
+          // إضافة headers لمنع التخزين المؤقت
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        console.log('📡 Config response status:', response.status);
 
         const result = await response.json();
-        console.log('Config result:', result);
+        console.log('📋 Config result:', result);
 
         if (result.success && result.data) {
           this.botConfig = {
@@ -149,9 +158,10 @@
             voiceId: result.data.voice_id || 'ar-male-1',
             welcomeMessage: result.data.welcome_message || ''
           };
-          console.log('Bot config loaded:', this.botConfig);
+          console.log('✅ Bot config loaded:', this.botConfig);
+          console.log('📢 Welcome message:', this.botConfig.welcomeMessage || 'No welcome message set');
         } else {
-          console.warn('Using default config due to API error:', result);
+          console.warn('⚠️ Using default config due to API error:', result);
           // تكوين افتراضي
           this.botConfig = {
             name: 'مساعد ذكي',
@@ -161,7 +171,7 @@
           };
         }
       } catch (error) {
-        console.error('Error fetching bot config:', error);
+        console.error('❌ Error fetching bot config:', error);
         // تكوين افتراضي في حالة الخطأ
         this.botConfig = {
           name: 'مساعد ذكي',
@@ -248,28 +258,41 @@
     setupInstantUpdates() {
       // مراقبة تغييرات localStorage للتحديث الفوري
       window.addEventListener('storage', (e) => {
-        if (e.key === `sanad_bot_config_${this.agentId}`) {
-          console.log('Config change detected via localStorage');
-          this.updateBotConfig();
+        if (e.key === `bot_config_${this.agentId}` || e.key === 'config_updated') {
+          console.log('🔔 Config updated via localStorage:', e.key);
+          // تحديث فوري مع تأخير قصير للتأكد من حفظ البيانات
+          setTimeout(() => {
+            this.updateBotConfig();
+          }, 100);
         }
       });
 
-      // مراقبة تغييرات في نفس النافذة
+      // مراقبة تغييرات localStorage في نفس النافذة
       const originalSetItem = localStorage.setItem;
+      const self = this;
       localStorage.setItem = function(key, value) {
         originalSetItem.apply(this, arguments);
-        if (key === `sanad_bot_config_${this.agentId}`) {
+        if (key === `bot_config_${self.agentId}` || key === 'config_updated') {
+          console.log('🔔 LocalStorage updated:', key);
           window.dispatchEvent(new StorageEvent('storage', {
             key: key,
             newValue: value
           }));
         }
-      }.bind(this);
+      };
+
+      // إضافة مراقب للأحداث المخصصة
+      window.addEventListener('botConfigUpdate', () => {
+        console.log('🔔 Bot config update event received');
+        this.updateBotConfig();
+      });
     }
 
     async updateBotConfig() {
       try {
-        const response = await fetch(`${this.config.baseUrl}/api/bot/config/${this.agentId}`);
+        // إضافة cache busting للتأكد من الحصول على أحدث البيانات
+        const timestamp = Date.now();
+        const response = await fetch(`${this.config.baseUrl}/api/bot/config/${this.agentId}?_t=${timestamp}`);
         const result = await response.json();
 
         if (result.success && result.data) {
@@ -284,11 +307,24 @@
           const hasChanges = JSON.stringify(this.botConfig) !== JSON.stringify(newConfig);
 
           if (hasChanges) {
-            console.log('Bot config updated:', newConfig);
+            console.log('🔄 Bot config updated:', newConfig);
+            
+            // التحقق من تغيير رسالة الترحيب تحديداً
+            const welcomeMessageChanged = this.botConfig?.welcomeMessage !== newConfig.welcomeMessage;
+            if (welcomeMessageChanged) {
+              console.log('📢 Welcome message updated:', {
+                old: this.botConfig?.welcomeMessage,
+                new: newConfig.welcomeMessage
+              });
+            }
+            
             this.botConfig = newConfig;
 
             // تحديث الويدجت فوراً
             this.updateWidget();
+            
+            // إشعار في console للمطور
+            console.log('✅ Widget updated with new configuration');
           }
         }
       } catch (error) {

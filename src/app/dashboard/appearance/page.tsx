@@ -96,9 +96,10 @@ function AppearanceContent() {
         setSaveMessage('تم حفظ رسالة الترحيب بنجاح');
         setTimeout(() => setSaveMessage(''), 2000);
 
-        // إشعار embed.js بالتحديث
+        // إشعار embed.js بالتحديث - طرق متعددة للتأكد من الوصول
         try {
-          localStorage.setItem(`sanad_bot_config_${user.agentId}`, JSON.stringify({
+          // الطريقة الأولى: localStorage مع المفتاح الصحيح
+          localStorage.setItem(`bot_config_${user.agentId}`, JSON.stringify({
             name: config.name,
             avatarEmoji: config.avatarEmoji,
             voiceId: config.voiceId,
@@ -106,8 +107,22 @@ function AppearanceContent() {
             welcomeMessage: config.welcomeMessage,
             timestamp: Date.now()
           }));
+          
+          // الطريقة الثانية: إشعار عام للتحديث
+          localStorage.setItem('config_updated', Date.now().toString());
+          
+          // الطريقة الثالثة: إرسال حدث مخصص
+          window.dispatchEvent(new CustomEvent('botConfigUpdate', {
+            detail: {
+              agentId: user.agentId,
+              welcomeMessage: config.welcomeMessage,
+              timestamp: Date.now()
+            }
+          }));
+          
+          console.log('🔔 Embed notification sent via multiple channels');
         } catch (e) {
-          console.log('Could not update localStorage for embed notification');
+          console.log('Could not update localStorage for embed notification:', e);
         }
       } else {
         throw new Error(result.error);
@@ -149,9 +164,10 @@ function AppearanceContent() {
         setSaveMessage('تم الحفظ تلقائياً');
         setTimeout(() => setSaveMessage(''), 2000);
 
-        // إشعار embed.js بالتحديث
+        // إشعار embed.js بالتحديث - طرق متعددة للتأكد من الوصول
         try {
-          localStorage.setItem(`sanad_bot_config_${user.agentId}`, JSON.stringify({
+          // الطريقة الأولى: localStorage مع المفتاح الصحيح
+          localStorage.setItem(`bot_config_${user.agentId}`, JSON.stringify({
             name: config.name,
             avatarEmoji: config.avatarEmoji,
             voiceId: config.voiceId,
@@ -159,8 +175,27 @@ function AppearanceContent() {
             welcomeMessage: config.welcomeMessage,
             timestamp: Date.now()
           }));
+          
+          // الطريقة الثانية: إشعار عام للتحديث
+          localStorage.setItem('config_updated', Date.now().toString());
+          
+          // الطريقة الثالثة: إرسال حدث مخصص
+          window.dispatchEvent(new CustomEvent('botConfigUpdate', {
+            detail: {
+              agentId: user.agentId,
+              config: {
+                name: config.name,
+                avatarEmoji: config.avatarEmoji,
+                voiceId: config.voiceId,
+                welcomeMessage: config.welcomeMessage
+              },
+              timestamp: Date.now()
+            }
+          }));
+          
+          console.log('🔔 Auto-save embed notification sent via multiple channels');
         } catch (e) {
-          console.log('Could not update localStorage for embed notification');
+          console.log('Could not update localStorage for embed notification:', e);
         }
       } else {
         throw new Error(result.error);

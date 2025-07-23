@@ -56,6 +56,11 @@ export async function GET(
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     response.headers.set('Content-Type', 'application/json; charset=utf-8');
+    // إضافة headers لمنع التخزين المؤقت
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Last-Modified', new Date().toUTCString());
     
     return response;
     }
@@ -70,6 +75,11 @@ export async function GET(
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     response.headers.set('Content-Type', 'application/json; charset=utf-8');
+    // إضافة headers لمنع التخزين المؤقت
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Last-Modified', new Date().toUTCString());
     
     return response;
 
